@@ -1,0 +1,61 @@
+additional map for pins. Surringe pump.
+other one is going to made in few days.
+
+
+TITRATOR PIN MAP  (source: config.h, target STM32G431CBU6)
+=========================================================
+ 
+BY FUNCTION
+-----------
+Pump driver (TMC2209, STEP/DIR mode)
+  PA0   STEP_PIN           TMC2209 STEP
+  PA1   DIR_PIN            TMC2209 DIR
+  PA8   EN_PIN             TMC2209 EN  (enable level: LOW)
+ 
+Limit switches (to GND, internal pull-up, pressed = LOW)
+  PA3   LIMIT_EMPTY_PIN    plunger fully expelled (HOME / zero)
+  PA4   LIMIT_FULL_PIN     plunger fully retracted (syringe full)
+ 
+Servo (3-way valve)
+  PA2   SERVO_PIN          SG90 or similar
+                           0 deg = fill, 90 deg = dispense, 180 deg = rinse/waste
+ 
+ADC ADS1256 (SPI1)
+  PA5   SPI1 SCK
+  PA6   SPI1 MISO          (ADS1256 DOUT)
+  PA7   SPI1 MOSI          (ADS1256 DIN)
+  PB0   ADS_CS_PIN         chip select
+  PB1   ADS_DRDY_PIN       data ready, active LOW
+  PB2   ADS_RESET_PIN      hardware reset (optional)
+  --    ADS_PWDN_PIN       not used (-1), tie high in hardware
+ 
+pH electrode inputs on the ADS1256
+  AIN0  ADS_PH_CHANNEL     positive input
+  AIN1  ADS_PH_NEG_CHANNEL negative input (differential mode is ON)
+ 
+Serial
+  USB CDC                  Serial over USB, 115200 baud (SERIAL_BAUD)
+ 
+ 
+BY PIN
+------
+  PA0   TMC2209 STEP
+  PA1   TMC2209 DIR
+  PA2   Servo signal
+  PA3   Limit switch EMPTY (HOME)
+  PA4   Limit switch FULL
+  PA5   SPI1 SCK  (ADS1256)
+  PA6   SPI1 MISO (ADS1256 DOUT)
+  PA7   SPI1 MOSI (ADS1256 DIN)
+  PA8   TMC2209 EN
+  PB0   ADS1256 CS
+  PB1   ADS1256 DRDY
+  PB2   ADS1256 RESET
+ 
+ 
+NOT IN config.h, but taken by hardware (do not use for anything else)
+---------------------------------------------------------------------
+  PA11 / PA12   USB D- / D+  (needed for USB CDC Serial)
+  PA13 / PA14   SWD SWDIO / SWCLK  (ST-Link)
+  NRST          not wired to the ST-Link on your setup (software reset)
+ 
