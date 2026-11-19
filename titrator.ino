@@ -183,25 +183,35 @@ static void dispatch(const Command& c) {
   }
 }
 
+
 void setup() {
   Serial.begin(SERIAL_BAUD);
+
   uint32_t t0 = millis();
-  while (!Serial && (millis() - t0 < 3000)) { ; }  // wait for host, with timeout
+  while (!Serial && (millis() - t0 < 3000)) {
+    ;
+  }
 
+  Serial.println("BOOT: setup started");
+
+  Serial.println("BOOT: pump.begin");
   pump.begin();
-  valve.begin();
-  gAdcOk = adc.begin(ADS_PGA, ADS_DATARATE, ADS_VREF);
-  ph.begin();
+  Serial.println("BOOT: pump OK");
 
-  Serial.println(F("============================================="));
-  Serial.println(F("  Syringe-Pump Titrator + pH  (STM32G431)"));
-  Serial.println(F("============================================="));
-  if (!gAdcOk) Serial.println(F("WARN: ADS1256 not responding - check SPI/DRDY wiring"));
-  Serial.println(F("Commands: PING STATUS HOME FILL DISPENSE VALVE READ"));
-  Serial.println(F("          CAL1 CAL2 CALSAVE TITRATE EP|CURVE STOP RESET"));
-  Serial.print  (F("uL/step=")); Serial.print(UL_PER_STEP, 6);
-  Serial.print  (F("  max_steps=")); Serial.println(MAX_STEPS);
-  Serial.println(F("---------------------------------------------"));
+  Serial.println("BOOT: valve.begin");
+  valve.begin();
+  Serial.println("BOOT: valve OK");
+
+  Serial.println("BOOT: adc.begin");
+  gAdcOk = adc.begin(ADS_PGA, ADS_DATARATE, ADS_VREF);
+  Serial.print("BOOT: adc result=");
+  Serial.println(gAdcOk);
+
+  Serial.println("BOOT: ph.begin");
+  ph.begin();
+  Serial.println("BOOT: ph OK");
+
+  Serial.println("BOOT: READY");
 }
 
 void loop() {
