@@ -40,6 +40,25 @@ enum PendingOp { OP_NONE, OP_FILL, OP_DISPENSE };
 PendingOp pendingOp = OP_NONE;
 float     pendingVol = 0;
 
+// Status LED: solid = ready, fast blink = busy, slow blink = fault (ADC not responding)
+static void ledUpdate() {
+  static uint32_t last = 0;
+  static bool level = false;
+  uint32_t now = millis();
+
+  bool busy = (gState == ST_HOMING || gState == ST_FILLING ||
+               gState == ST_DISPENSING || gState == ST_TITRATE_EP ||
+               gState == ST_TITRATE_CURVE || gState == ST_MEASURING);
+
+  if (!gAdcOk || gState == ST_ERROR) {
+    if (now - last >= 500) { last = now; level = !level; digitalWrite(STATUS_LED_PIN, level); }
+  } else if (busy) {
+    if (now - last >= 100) { last = now; level = !level; digitalWrite(STATUS_LED_PIN, level); }
+  } else {
+    digitalWrite(STATUS_LED_PIN, HIGH);
+  }
+}
+
 const char* stateName(SysState s) {
   switch (s) {
     case ST_IDLE:          return "IDLE";
@@ -185,6 +204,8 @@ static void dispatch(const Command& c) {
 
 
 void setup() {
+  pinMode(STATUS_LED_PIN, OUTPUT);
+  digitalWrite(STATUS_LED_PIN, LOW);   // off until init is done
   Serial.begin(SERIAL_BAUD);
 
   uint32_t t0 = millis();
@@ -215,7 +236,10 @@ void setup() {
 }
 
 void loop() {
+  // LED
+  ledUpdate();
   // 1. Service motion + titration every pass (non-blocking).
+  
   pump.update();
   if (titration.active()) titration.update();
 

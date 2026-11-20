@@ -12,7 +12,15 @@
 #define CONFIG_H
 
 #include <Arduino.h>
-
+/* LED FOR STATUS
+*/
+#define STATUS_LED_PIN      PB5
+/* RGB LED FOR STATUS*/
+// config.h  (замена STATUS_LED_PIN)
+#define LED_R_PIN   PB6     // TIM4_CH1
+#define LED_G_PIN   PB7     // TIM4_CH2
+#define LED_B_PIN   PB9     // TIM4_CH4
+#define LED_COMMON_ANODE 0  // 1, если общий анод
 // =====================================================================
 // Pump - TMC2209 in STEP/DIR mode (microsteps set by hardware MS1/MS2)
 // =====================================================================
